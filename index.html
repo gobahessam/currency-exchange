@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المتميز للحوالات المالية والخدمات الطلابية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>المتميز للحوالات المالية 💵</h1>
+                <p class="slogan">خدمات مالية موثوقة وسريعة في روسيا 🇷🇺</p>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="live-rates">
+            <h2>أسعار العملات الحالية مقابل الروبل الروسي 📊</h2>
+            <div class="rates-grid">
+                <div class="rate-card">
+                    <img src="https://flagcdn.com/w40/us.png" alt="USD">
+                    <h3>الدولار الأمريكي</h3>
+                    <p class="rate" id="usd-rate">جاري التحميل...</p>
+                    <p class="update-time" id="update-time"></p>
+                </div>
+                <div class="rate-card">
+                    <img src="https://flagcdn.com/w40/sa.png" alt="SAR">
+                    <h3>الريال السعودي</h3>
+                    <p class="rate" id="sar-rate">جاري التحميل...</p>
+                </div>
+                <div class="rate-card">
+                    <img src="https://flagcdn.com/w40/ye.png" alt="YER">
+                    <h3>الريال اليمني</h3>
+                    <p class="rate" id="yer-rate">جاري التحميل...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="currency-converter">
+            <h2>محول العملات 💱</h2>
+            <div class="converter-container">
+                <div class="input-group">
+                    <input type="number" id="amount" placeholder="المبلغ">
+                    <select id="from-currency">
+                        <option value="RUB">روبل روسي (RUB)</option>
+                        <option value="USD">دولار أمريكي (USD)</option>
+                        <option value="SAR">ريال سعودي (SAR)</option>
+                        <option value="YER">ريال يمني (YER)</option>
+                    </select>
+                </div>
+                <button id="swap-currency"><i class="fas fa-exchange-alt"></i></button>
+                <div class="input-group">
+                    <input type="number" id="result" readonly>
+                    <select id="to-currency">
+                        <option value="USD">دولار أمريكي (USD)</option>
+                        <option value="RUB">روبل روسي (RUB)</option>
+                        <option value="SAR">ريال سعودي (SAR)</option>
+                        <option value="YER">ريال يمني (YER)</option>
+                    </select>
+                </div>
+                <button id="convert">تحويل</button>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>لماذا تختار خدماتنا؟ 🌟</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>سرعة التحويل</h3>
+                    <p>تحويل فوري للأموال خلال دقائق</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>أمان مضمون</h3>
+                    <p>تحويلات آمنة ومضمونة 100%</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-percentage"></i>
+                    <h3>أفضل الأسعار</h3>
+                    <p>نقدم أفضل أسعار الصرف في السوق</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="services">
+            <h2>خدماتنا الشاملة 📋</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fas fa-university"></i>
+                    <h3>الخدمات الطلابية</h3>
+                    <ul>
+                        <li>✅ تسجيل في الجامعات الروسية</li>
+                        <li>✅ سنة تحضيرية للغة الروسية</li>
+                        <li>✅ بكالوريوس وماجستير في جميع التخصصات</li>
+                        <li>✅ مساعدة في استخراج التأشيرة الطلابية</li>
+                        <li>✅ خدمات الإقامة والسكن الطلابي</li>
+                    </ul>
+                    <a href="https://wa.me/79803606622?text=مرحباً، أرغب في الاستفسار عن الخدمات الطلابية" class="service-button">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>طلب الخدمة</span>
+                    </a>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>الخدمات المالية</h3>
+                    <ul>
+                        <li>✅ تحويل من وإلى جميع دول العالم</li>
+                        <li>✅ بيع وشراء العملات الرئيسية</li>
+                        <li>✅ تداول العملات الرقمية USDT</li>
+                        <li>✅ خدمة كاش دولار نظيف</li>
+                        <li>✅ أسعار منافسة وشفافة</li>
+                    </ul>
+                    <a href="https://wa.me/79803606622?text=مرحباً، أرغب في الاستفسار عن الخدمات المالية وتحويل الأموال" class="service-button">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>طلب الخدمة</span>
+                    </a>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-plane"></i>
+                    <h3>خدمات إضافية</h3>
+                    <ul>
+                        <li>✅ حجز تذاكر طيران بأفضل الأسعار</li>
+                        <li>✅ ترجمة معتمدة لجميع الوثائق</li>
+                        <li>✅ استخراج عدم محكومية للطلاب</li>
+                        <li>✅ خدمات التصديق والتوثيق</li>
+                        <li>✅ استشارات مجانية</li>
+                    </ul>
+                    <a href="https://wa.me/79803606622?text=مرحباً، أرغب في الاستفسار عن الخدمات الإضافية" class="service-button">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>طلب الخدمة</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact">
+            <h2>تواصل معنا 📞</h2>
+            <div class="contact-info">
+                <p>نحن متواجدون لخدمتكم على مدار الساعة</p>
+                <div class="contact-methods">
+                    <a href="https://wa.me/79803606622" class="whatsapp-button">
+                        <i class="fab fa-whatsapp"></i>
+                        +7 980 360-66-22
+                    </a>
+                    <div class="working-hours">
+                        <p><i class="far fa-clock"></i> ساعات العمل: 24/7</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <h3>المتميز للحوالات المالية</h3>
+                <p>خدمات مالية وطلابية موثوقة في روسيا</p>
+            </div>
+            <div class="footer-contact">
+                <p>تواصل معنا عبر الواتساب</p>
+                <p dir="ltr">+7 980 360-66-22</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 المتميز للحوالات المالية والخدمات الطلابية - جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

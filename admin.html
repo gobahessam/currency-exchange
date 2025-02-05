@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - إدارة أسعار العملات</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
@@ -51,6 +50,7 @@
             align-items: center;
             gap: 0.5rem;
             transition: all 0.3s ease;
+            text-decoration: none;
         }
 
         .action-btn:hover {
@@ -168,42 +168,6 @@
             box-shadow: 0 5px 15px rgba(76,175,80,0.2);
         }
 
-        .logout-btn {
-            background: #f44336;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-
-        .logout-btn:hover {
-            background: #d32f2f;
-        }
-
-        .settings-btn {
-            background: #2196F3;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
-            position: absolute;
-            top: 20px;
-            left: 120px;
-        }
-
-        .settings-btn:hover {
-            background: #1976D2;
-        }
-
         .modal {
             display: none;
             position: fixed;
@@ -213,10 +177,15 @@
             bottom: 0;
             background: rgba(0,0,0,0.5);
             z-index: 1000;
-            display: flex;
+            opacity: 0;
+            transition: opacity 0.3s ease;
             justify-content: center;
             align-items: center;
             padding: 1rem;
+        }
+
+        .modal.show {
+            opacity: 1;
         }
 
         .modal-content {
@@ -227,6 +196,12 @@
             border-radius: 15px;
             position: relative;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
         }
 
         .modal-content h2 {
@@ -406,6 +381,7 @@
             <i class="fas fa-save"></i>
             حفظ الأسعار
         </button>
+
         <div id="status" class="status"></div>
     </div>
 
@@ -414,7 +390,7 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeSettings()">&times;</span>
             <h2>تغيير كلمة المرور</h2>
-            <form class="password-form" onsubmit="return changePassword(event)">
+            <form id="passwordForm" class="password-form" onsubmit="return changePassword(event)">
                 <div class="password-input">
                     <label for="currentPassword">كلمة المرور الحالية:</label>
                     <input type="password" id="currentPassword" required>
@@ -438,41 +414,24 @@
         if (localStorage.getItem('adminLoggedIn') !== 'true') {
             window.location.href = 'login.html';
         }
-    </script>
 
-    <script>
         // تحميل الأسعار الحالية عند فتح الصفحة
         window.addEventListener('DOMContentLoaded', loadCurrentRates);
-
-        // دالة لتنسيق الأرقام بالإنجليزية
-        function formatNumber(number) {
-            return new Intl.NumberFormat('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-                style: 'decimal'
-            }).format(number);
-        }
 
         function loadCurrentRates() {
             const savedRates = localStorage.getItem('customRates');
             if (savedRates) {
                 const rates = JSON.parse(savedRates);
-                document.getElementById('usd-rub').value = formatNumber(rates.USD.RUB);
-                document.getElementById('usd-sar').value = formatNumber(rates.USD.SAR);
-                document.getElementById('usd-yer').value = formatNumber(rates.USD.YER);
-            } else {
-                // القيم الافتراضية
-                document.getElementById('usd-rub').value = formatNumber(92.50);
-                document.getElementById('usd-sar').value = formatNumber(3.75);
-                document.getElementById('usd-yer').value = formatNumber(250.35);
+                document.getElementById('usd-rub').value = rates.USD.RUB;
+                document.getElementById('usd-sar').value = rates.USD.SAR;
+                document.getElementById('usd-yer').value = rates.USD.YER;
             }
         }
 
         function saveRates() {
-            // تنظيف القيم من الفواصل قبل التحويل إلى أرقام
-            const usdRub = parseFloat(document.getElementById('usd-rub').value.replace(/,/g, ''));
-            const usdSar = parseFloat(document.getElementById('usd-sar').value.replace(/,/g, ''));
-            const usdYer = parseFloat(document.getElementById('usd-yer').value.replace(/,/g, ''));
+            const usdRub = parseFloat(document.getElementById('usd-rub').value);
+            const usdSar = parseFloat(document.getElementById('usd-sar').value);
+            const usdYer = parseFloat(document.getElementById('usd-yer').value);
 
             if (!usdRub || !usdSar || !usdYer) {
                 showStatus('يرجى إدخال جميع الأسعار بشكل صحيح', 'error');
@@ -484,32 +443,10 @@
                     RUB: usdRub,
                     SAR: usdSar,
                     YER: usdYer
-                },
-                RUB: {
-                    USD: 1 / usdRub,
-                    SAR: (1 / usdRub) * usdSar,
-                    YER: (1 / usdRub) * usdYer
-                },
-                SAR: {
-                    USD: 1 / usdSar,
-                    RUB: (1 / usdSar) * usdRub,
-                    YER: (1 / usdSar) * usdYer
-                },
-                YER: {
-                    USD: 1 / usdYer,
-                    RUB: (1 / usdYer) * usdRub,
-                    SAR: (1 / usdYer) * usdSar
                 }
             };
 
             localStorage.setItem('customRates', JSON.stringify(rates));
-            localStorage.setItem('useCustomRates', 'true');
-            
-            // تحديث القيم المعروضة بالتنسيق الإنجليزي
-            document.getElementById('usd-rub').value = formatNumber(usdRub);
-            document.getElementById('usd-sar').value = formatNumber(usdSar);
-            document.getElementById('usd-yer').value = formatNumber(usdYer);
-            
             showStatus('تم حفظ الأسعار بنجاح', 'success');
         }
 
@@ -522,25 +459,29 @@
             }, 3000);
         }
 
+        function openSettings() {
+            const modal = document.getElementById('settingsModal');
+            document.getElementById('passwordForm').reset();
+            document.getElementById('passwordStatus').className = 'status';
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function closeSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
         function logout() {
             localStorage.removeItem('adminLoggedIn');
             window.location.href = 'login.html';
         }
 
-        // دوال إدارة نافذة الإعدادات
-        function openSettings() {
-            document.getElementById('settingsModal').style.display = 'block';
-        }
-
-        function closeSettings() {
-            document.getElementById('settingsModal').style.display = 'none';
-        }
-
-        // إغلاق النافذة عند النقر خارجها
         window.onclick = function(event) {
             const modal = document.getElementById('settingsModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
+            if (event.target === modal) {
+                closeSettings();
             }
         }
 
@@ -552,10 +493,9 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
             const status = document.getElementById('passwordStatus');
 
-            // التحقق من كلمة المرور الحالية
-            const correctPassword = 'admin123'; // نفس كلمة المرور في صفحة تسجيل الدخول
+            const savedPassword = localStorage.getItem('adminPassword') || 'admin123';
 
-            if (currentPassword !== correctPassword) {
+            if (currentPassword !== savedPassword) {
                 status.textContent = 'كلمة المرور الحالية غير صحيحة';
                 status.className = 'status error';
                 return false;
@@ -573,18 +513,14 @@
                 return false;
             }
 
-            // تحديث كلمة المرور
             localStorage.setItem('adminPassword', newPassword);
             
             status.textContent = 'تم تغيير كلمة المرور بنجاح';
             status.className = 'status success';
 
-            // إعادة تعيين النموذج
-            event.target.reset();
-
-            // إغلاق النافذة بعد ثانيتين
             setTimeout(() => {
                 closeSettings();
+                document.getElementById('passwordForm').reset();
                 status.className = 'status';
             }, 2000);
 

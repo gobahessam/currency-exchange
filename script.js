@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentRates = {};
 
     // دالة لتنسيق الأرقام بالإنجليزية
-    function formatNumberEnglish(number) {
+    function formatNumber(number) {
         return new Intl.NumberFormat('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
@@ -23,19 +23,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }).format(number);
     }
 
-    // دالة لتنسيق الأرقام بالعربية
-    function formatNumberArabic(number) {
-        return new Intl.NumberFormat('ar-SA', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-            style: 'decimal'
-        }).format(number);
-    }
-
-    // دالة لجلب أسعار العملات من Yandex
+    // دالة لجلب أسعار العملات
     async function fetchExchangeRates() {
         try {
-            // استخدام Yandex API مباشرة
+            // التحقق من وجود أسعار مخصصة
+            const useCustomRates = localStorage.getItem('useCustomRates');
+            const customRates = localStorage.getItem('customRates');
+            
+            if (useCustomRates === 'true' && customRates) {
+                currentRates = JSON.parse(customRates);
+                console.log('تم استخدام الأسعار المخصصة:', currentRates);
+                updateDisplayRates();
+                return;
+            }
+
+            // إذا لم تكن هناك أسعار مخصصة، نستخدم API البنك المركزي
             const response = await fetch('https://www.cbr-xml-daily.ru/daily_json.js');
             const data = await response.json();
             
@@ -151,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             element.style.color = newValue > oldValue ? '#22c55e' : 
                                 newValue < oldValue ? '#ef4444' : 'inherit';
             
-            element.innerHTML = `1 ${currency} = <span class="rate-value">${formatNumberArabic(newRate)}</span> RUB`;
+            element.innerHTML = `1 ${currency} = <span class="rate-value">${formatNumber(newRate)}</span> RUB`;
             
             setTimeout(() => {
                 element.style.color = 'inherit';
@@ -200,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // تنسيق النتيجة بالأرقام الإنجليزية
-        result.value = formatNumberEnglish(convertedAmount);
+        result.value = formatNumber(convertedAmount);
 
         // تأثير بصري للتحديث
         result.style.backgroundColor = '#f0fff4';

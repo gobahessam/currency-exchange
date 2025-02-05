@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - إدارة أسعار العملات</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-panel {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .rate-control {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .rate-input {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .rate-input input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .save-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .save-btn:hover {
+            background: #45a049;
+        }
+        .logout-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .logout-btn:hover {
+            background: #d32f2f;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background: #dff0d8;
+            color: #3c763d;
+            display: block;
+        }
+        .error {
+            background: #f2dede;
+            color: #a94442;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // التحقق من تسجيل الدخول
+        if (localStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+
+    <div class="admin-panel">
+        <h1>لوحة التحكم - إدارة أسعار العملات</h1>
+        
+        <div class="rate-control">
+            <div class="rate-input">
+                <label for="usd-rub">سعر الدولار مقابل الروبل:</label>
+                <input type="number" id="usd-rub" step="0.01" min="0">
+            </div>
+            <div class="rate-input">
+                <label for="usd-sar">سعر الدولار مقابل الريال السعودي:</label>
+                <input type="number" id="usd-sar" step="0.01" min="0">
+            </div>
+            <div class="rate-input">
+                <label for="usd-yer">سعر الدولار مقابل الريال اليمني:</label>
+                <input type="number" id="usd-yer" step="0.01" min="0">
+            </div>
+        </div>
+
+        <button class="save-btn" onclick="saveRates()">حفظ الأسعار</button>
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        // تحميل الأسعار الحالية عند فتح الصفحة
+        window.addEventListener('DOMContentLoaded', loadCurrentRates);
+
+        function loadCurrentRates() {
+            const savedRates = localStorage.getItem('customRates');
+            if (savedRates) {
+                const rates = JSON.parse(savedRates);
+                document.getElementById('usd-rub').value = rates.USD.RUB;
+                document.getElementById('usd-sar').value = rates.USD.SAR;
+                document.getElementById('usd-yer').value = rates.USD.YER;
+            } else {
+                // القيم الافتراضية
+                document.getElementById('usd-rub').value = '92.50';
+                document.getElementById('usd-sar').value = '3.75';
+                document.getElementById('usd-yer').value = '250.35';
+            }
+        }
+
+        function saveRates() {
+            const usdRub = parseFloat(document.getElementById('usd-rub').value);
+            const usdSar = parseFloat(document.getElementById('usd-sar').value);
+            const usdYer = parseFloat(document.getElementById('usd-yer').value);
+
+            if (!usdRub || !usdSar || !usdYer) {
+                showStatus('يرجى إدخال جميع الأسعار بشكل صحيح', 'error');
+                return;
+            }
+
+            const rates = {
+                USD: {
+                    RUB: usdRub,
+                    SAR: usdSar,
+                    YER: usdYer
+                },
+                RUB: {
+                    USD: 1 / usdRub,
+                    SAR: (1 / usdRub) * usdSar,
+                    YER: (1 / usdRub) * usdYer
+                },
+                SAR: {
+                    USD: 1 / usdSar,
+                    RUB: (1 / usdSar) * usdRub,
+                    YER: (1 / usdSar) * usdYer
+                },
+                YER: {
+                    USD: 1 / usdYer,
+                    RUB: (1 / usdYer) * usdRub,
+                    SAR: (1 / usdYer) * usdSar
+                }
+            };
+
+            localStorage.setItem('customRates', JSON.stringify(rates));
+            localStorage.setItem('useCustomRates', 'true');
+            showStatus('تم حفظ الأسعار بنجاح', 'success');
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            setTimeout(() => {
+                status.className = 'status';
+            }, 3000);
+        }
+
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

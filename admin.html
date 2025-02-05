@@ -114,25 +114,35 @@
         // تحميل الأسعار الحالية عند فتح الصفحة
         window.addEventListener('DOMContentLoaded', loadCurrentRates);
 
+        // دالة لتنسيق الأرقام بالإنجليزية
+        function formatNumber(number) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                style: 'decimal'
+            }).format(number);
+        }
+
         function loadCurrentRates() {
             const savedRates = localStorage.getItem('customRates');
             if (savedRates) {
                 const rates = JSON.parse(savedRates);
-                document.getElementById('usd-rub').value = rates.USD.RUB;
-                document.getElementById('usd-sar').value = rates.USD.SAR;
-                document.getElementById('usd-yer').value = rates.USD.YER;
+                document.getElementById('usd-rub').value = formatNumber(rates.USD.RUB);
+                document.getElementById('usd-sar').value = formatNumber(rates.USD.SAR);
+                document.getElementById('usd-yer').value = formatNumber(rates.USD.YER);
             } else {
                 // القيم الافتراضية
-                document.getElementById('usd-rub').value = '92.50';
-                document.getElementById('usd-sar').value = '3.75';
-                document.getElementById('usd-yer').value = '250.35';
+                document.getElementById('usd-rub').value = formatNumber(92.50);
+                document.getElementById('usd-sar').value = formatNumber(3.75);
+                document.getElementById('usd-yer').value = formatNumber(250.35);
             }
         }
 
         function saveRates() {
-            const usdRub = parseFloat(document.getElementById('usd-rub').value);
-            const usdSar = parseFloat(document.getElementById('usd-sar').value);
-            const usdYer = parseFloat(document.getElementById('usd-yer').value);
+            // تنظيف القيم من الفواصل قبل التحويل إلى أرقام
+            const usdRub = parseFloat(document.getElementById('usd-rub').value.replace(/,/g, ''));
+            const usdSar = parseFloat(document.getElementById('usd-sar').value.replace(/,/g, ''));
+            const usdYer = parseFloat(document.getElementById('usd-yer').value.replace(/,/g, ''));
 
             if (!usdRub || !usdSar || !usdYer) {
                 showStatus('يرجى إدخال جميع الأسعار بشكل صحيح', 'error');
@@ -164,6 +174,12 @@
 
             localStorage.setItem('customRates', JSON.stringify(rates));
             localStorage.setItem('useCustomRates', 'true');
+            
+            // تحديث القيم المعروضة بالتنسيق الإنجليزي
+            document.getElementById('usd-rub').value = formatNumber(usdRub);
+            document.getElementById('usd-sar').value = formatNumber(usdSar);
+            document.getElementById('usd-yer').value = formatNumber(usdYer);
+            
             showStatus('تم حفظ الأسعار بنجاح', 'success');
         }
 

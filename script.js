@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // العناصر
     const amount = document.getElementById('amount');
     const fromCurrency = document.getElementById('from-currency');
     const toCurrency = document.getElementById('to-currency');
@@ -38,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function formatNumberArabic(number) {
         return new Intl.NumberFormat('ar-SA', {
             minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+            maximumFractionDigits: 2,
+            style: 'decimal'
         }).format(number);
     }
 
@@ -63,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTime.textContent = `آخر تحديث: ${formattedDate}`;
     }
 
+    // دالة التحويل بين العملات
     function convertCurrency() {
         if (!amount.value) {
             alert('الرجاء إدخال المبلغ');
@@ -73,42 +76,75 @@ document.addEventListener('DOMContentLoaded', () => {
         const to = toCurrency.value;
         const amountValue = parseFloat(amount.value);
 
-        if (from === to) {
-            result.value = formatNumberArabic(amountValue);
+        if (isNaN(amountValue)) {
+            alert('الرجاء إدخال رقم صحيح');
             return;
         }
 
-        let rate = 1;
-        if (currentRates[from] && currentRates[from][to]) {
-            rate = currentRates[from][to];
-        } else if (currentRates[to] && currentRates[to][from]) {
-            rate = 1 / currentRates[to][from];
+        let convertedAmount;
+
+        // التحويل المباشر إذا كان لدينا السعر
+        if (from === to) {
+            convertedAmount = amountValue;
+        }
+        // التحويل من USD إلى RUB
+        else if (from === 'USD' && to === 'RUB') {
+            convertedAmount = amountValue * currentRates.USD.RUB;
+        }
+        // التحويل من RUB إلى USD
+        else if (from === 'RUB' && to === 'USD') {
+            convertedAmount = amountValue * currentRates.RUB.USD;
+        }
+        // التحويل من USD إلى عملة أخرى
+        else if (from === 'USD') {
+            convertedAmount = amountValue * currentRates.USD[to];
+        }
+        // التحويل من عملة أخرى إلى USD
+        else if (to === 'USD') {
+            convertedAmount = amountValue * currentRates[from].USD;
+        }
+        // التحويل من RUB إلى عملة أخرى
+        else if (from === 'RUB') {
+            convertedAmount = amountValue * currentRates.RUB[to];
+        }
+        // التحويل من عملة أخرى إلى RUB
+        else if (to === 'RUB') {
+            convertedAmount = amountValue * currentRates[from].RUB;
+        }
+        // التحويل بين العملات الأخرى عبر USD
+        else {
+            convertedAmount = amountValue * currentRates[from].USD * currentRates.USD[to];
         }
 
-        const convertedAmount = amountValue * rate;
+        // تنسيق النتيجة
         result.value = formatNumberArabic(convertedAmount);
 
+        // تأثير بصري للتحديث
         result.style.backgroundColor = '#f0fff4';
         setTimeout(() => {
             result.style.backgroundColor = '';
         }, 300);
     }
 
+    // دالة تبديل العملات
     function swapCurrencies() {
         const temp = fromCurrency.value;
         fromCurrency.value = toCurrency.value;
         toCurrency.value = temp;
+        
         if (amount.value) {
             convertCurrency();
         }
     }
 
-    // عرض الأسعار عند تحميل الصفحة
+    // تحديث الأسعار عند تحميل الصفحة
     updateDisplayRates();
 
     // إضافة مستمعي الأحداث
     convertBtn.addEventListener('click', convertCurrency);
     swapBtn.addEventListener('click', swapCurrencies);
+    
+    // تحويل مباشر عند تغيير أي قيمة
     amount.addEventListener('input', convertCurrency);
     fromCurrency.addEventListener('change', convertCurrency);
     toCurrency.addEventListener('change', convertCurrency);

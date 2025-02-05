@@ -44,25 +44,25 @@
             <h2>محول العملات 💱</h2>
             <div class="converter-container">
                 <div class="input-group">
-                    <input type="number" id="amount" placeholder="المبلغ">
+                    <input type="number" id="amount" placeholder="المبلغ" step="any">
                     <select id="from-currency">
-                        <option value="RUB">روبل روسي (RUB)</option>
                         <option value="USD">دولار أمريكي (USD)</option>
+                        <option value="RUB">روبل روسي (RUB)</option>
                         <option value="SAR">ريال سعودي (SAR)</option>
                         <option value="YER">ريال يمني (YER)</option>
                     </select>
                 </div>
                 <button id="swap-currency"><i class="fas fa-exchange-alt"></i></button>
                 <div class="input-group">
-                    <input type="number" id="result" readonly>
+                    <input type="text" id="result" readonly>
                     <select id="to-currency">
-                        <option value="USD">دولار أمريكي (USD)</option>
                         <option value="RUB">روبل روسي (RUB)</option>
+                        <option value="USD">دولار أمريكي (USD)</option>
                         <option value="SAR">ريال سعودي (SAR)</option>
                         <option value="YER">ريال يمني (YER)</option>
                     </select>
                 </div>
-                <button id="convert">تحويل</button>
+                <button id="convert">تحويل <i class="fas fa-sync-alt"></i></button>
             </div>
         </section>
 

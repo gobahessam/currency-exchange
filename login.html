@@ -165,11 +165,11 @@
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('error-message');
 
-            // يمكنك تغيير اسم المستخدم وكلمة المرور هنا
+            // التحقق من اسم المستخدم وكلمة المرور
             const correctUsername = 'admin';
-            const correctPassword = 'admin123';
+            const savedPassword = localStorage.getItem('adminPassword') || 'admin123';
 
-            if (username === correctUsername && password === correctPassword) {
+            if (username === correctUsername && password === savedPassword) {
                 localStorage.setItem('adminLoggedIn', 'true');
                 window.location.href = 'admin.html';
             } else {

@@ -5,45 +5,169 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - إدارة أسعار العملات</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .admin-panel {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        body {
+            background: #f5f7fa;
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .rate-control {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .rate-input {
+
+        .top-bar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 1rem;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .rate-input input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
+
+        .top-bar h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.2rem;
         }
-        .save-btn {
-            background: #4CAF50;
+
+        .top-bar-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.1);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 0.5rem 1rem;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
         }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .action-btn.logout {
+            background: rgba(244,67,54,0.1);
+        }
+
+        .action-btn.logout:hover {
+            background: rgba(244,67,54,0.2);
+        }
+
+        .admin-panel {
+            max-width: 1200px;
+            margin: 80px auto 20px;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .dashboard-header h2 {
+            color: #2a5298;
+            margin: 0;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .dashboard-header p {
+            color: #666;
+            margin: 0;
+        }
+
+        .rates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .rate-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .rate-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .rate-card h3 {
+            color: #2a5298;
+            margin: 0 0 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rate-input {
+            position: relative;
+        }
+
+        .rate-input input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .rate-input input:focus {
+            border-color: #2a5298;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(42,82,152,0.1);
+        }
+
+        .rate-input i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
         .save-btn:hover {
-            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76,175,80,0.2);
         }
+
         .logout-btn {
             background: #f44336;
             color: white;
@@ -57,58 +181,264 @@
             top: 20px;
             left: 20px;
         }
+
         .logout-btn:hover {
             background: #d32f2f;
         }
-        .status {
-            margin-top: 20px;
-            padding: 10px;
+
+        .settings-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
             border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+            position: absolute;
+            top: 20px;
+            left: 120px;
+        }
+
+        .settings-btn:hover {
+            background: #1976D2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .modal-content h2 {
+            color: #2a5298;
+            margin: 0 0 1.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #2a5298;
+        }
+
+        .password-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .password-input {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .password-input label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .password-input input {
+            padding: 0.8rem;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .password-input input:focus {
+            border-color: #2a5298;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(42,82,152,0.1);
+        }
+
+        .change-password-btn {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .change-password-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33,150,243,0.2);
+        }
+
+        .status {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
             display: none;
         }
+
         .success {
             background: #dff0d8;
             color: #3c763d;
             display: block;
         }
+
         .error {
             background: #f2dede;
             color: #a94442;
             display: block;
         }
+
+        @media (max-width: 768px) {
+            .admin-panel {
+                padding: 1rem;
+                margin-top: 70px;
+            }
+
+            .dashboard-header {
+                padding: 1.5rem;
+            }
+
+            .dashboard-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .top-bar h1 {
+                font-size: 1rem;
+            }
+
+            .action-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="top-bar">
+        <h1>لوحة التحكم</h1>
+        <div class="top-bar-actions">
+            <a href="index.html" class="action-btn">
+                <i class="fas fa-home"></i>
+                الصفحة الرئيسية
+            </a>
+            <button class="action-btn" onclick="openSettings()">
+                <i class="fas fa-cog"></i>
+                الإعدادات
+            </button>
+            <button class="action-btn logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                تسجيل الخروج
+            </button>
+        </div>
+    </div>
+
+    <div class="admin-panel">
+        <div class="dashboard-header">
+            <h2>إدارة أسعار العملات</h2>
+            <p>قم بتعديل أسعار العملات مقابل الدولار الأمريكي</p>
+        </div>
+
+        <div class="rates-grid">
+            <div class="rate-card">
+                <h3>
+                    <i class="fas fa-ruble-sign"></i>
+                    الروبل الروسي
+                </h3>
+                <div class="rate-input">
+                    <input type="number" id="usd-rub" step="0.01" min="0" placeholder="سعر الدولار مقابل الروبل">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </div>
+
+            <div class="rate-card">
+                <h3>
+                    <i class="fas fa-coins"></i>
+                    الريال السعودي
+                </h3>
+                <div class="rate-input">
+                    <input type="number" id="usd-sar" step="0.01" min="0" placeholder="سعر الدولار مقابل الريال السعودي">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </div>
+
+            <div class="rate-card">
+                <h3>
+                    <i class="fas fa-coins"></i>
+                    الريال اليمني
+                </h3>
+                <div class="rate-input">
+                    <input type="number" id="usd-yer" step="0.01" min="0" placeholder="سعر الدولار مقابل الريال اليمني">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </div>
+        </div>
+
+        <button class="save-btn" onclick="saveRates()">
+            <i class="fas fa-save"></i>
+            حفظ الأسعار
+        </button>
+        <div id="status" class="status"></div>
+    </div>
+
+    <!-- نافذة تغيير كلمة المرور -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeSettings()">&times;</span>
+            <h2>تغيير كلمة المرور</h2>
+            <form class="password-form" onsubmit="return changePassword(event)">
+                <div class="password-input">
+                    <label for="currentPassword">كلمة المرور الحالية:</label>
+                    <input type="password" id="currentPassword" required>
+                </div>
+                <div class="password-input">
+                    <label for="newPassword">كلمة المرور الجديدة:</label>
+                    <input type="password" id="newPassword" required minlength="6">
+                </div>
+                <div class="password-input">
+                    <label for="confirmPassword">تأكيد كلمة المرور الجديدة:</label>
+                    <input type="password" id="confirmPassword" required minlength="6">
+                </div>
+                <button type="submit" class="change-password-btn">تغيير كلمة المرور</button>
+            </form>
+            <div id="passwordStatus" class="status"></div>
+        </div>
+    </div>
+
     <script>
         // التحقق من تسجيل الدخول
         if (localStorage.getItem('adminLoggedIn') !== 'true') {
             window.location.href = 'login.html';
         }
     </script>
-
-    <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
-
-    <div class="admin-panel">
-        <h1>لوحة التحكم - إدارة أسعار العملات</h1>
-        
-        <div class="rate-control">
-            <div class="rate-input">
-                <label for="usd-rub">سعر الدولار مقابل الروبل:</label>
-                <input type="number" id="usd-rub" step="0.01" min="0">
-            </div>
-            <div class="rate-input">
-                <label for="usd-sar">سعر الدولار مقابل الريال السعودي:</label>
-                <input type="number" id="usd-sar" step="0.01" min="0">
-            </div>
-            <div class="rate-input">
-                <label for="usd-yer">سعر الدولار مقابل الريال اليمني:</label>
-                <input type="number" id="usd-yer" step="0.01" min="0">
-            </div>
-        </div>
-
-        <button class="save-btn" onclick="saveRates()">حفظ الأسعار</button>
-        <div id="status" class="status"></div>
-    </div>
 
     <script>
         // تحميل الأسعار الحالية عند فتح الصفحة
@@ -195,6 +525,70 @@
         function logout() {
             localStorage.removeItem('adminLoggedIn');
             window.location.href = 'login.html';
+        }
+
+        // دوال إدارة نافذة الإعدادات
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'block';
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        // إغلاق النافذة عند النقر خارجها
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function changePassword(event) {
+            event.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const status = document.getElementById('passwordStatus');
+
+            // التحقق من كلمة المرور الحالية
+            const correctPassword = 'admin123'; // نفس كلمة المرور في صفحة تسجيل الدخول
+
+            if (currentPassword !== correctPassword) {
+                status.textContent = 'كلمة المرور الحالية غير صحيحة';
+                status.className = 'status error';
+                return false;
+            }
+
+            if (newPassword !== confirmPassword) {
+                status.textContent = 'كلمة المرور الجديدة غير متطابقة';
+                status.className = 'status error';
+                return false;
+            }
+
+            if (newPassword.length < 6) {
+                status.textContent = 'كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل';
+                status.className = 'status error';
+                return false;
+            }
+
+            // تحديث كلمة المرور
+            localStorage.setItem('adminPassword', newPassword);
+            
+            status.textContent = 'تم تغيير كلمة المرور بنجاح';
+            status.className = 'status success';
+
+            // إعادة تعيين النموذج
+            event.target.reset();
+
+            // إغلاق النافذة بعد ثانيتين
+            setTimeout(() => {
+                closeSettings();
+                status.className = 'status';
+            }, 2000);
+
+            return false;
         }
     </script>
 </body>

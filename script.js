@@ -10,44 +10,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const sarRate = document.getElementById('sar-rate');
     const yerRate = document.getElementById('yer-rate');
 
-    // أسعار الصرف الحالية (تحديث 5 فبراير 2025)
-    const exchangeRates = {
+    // أسعار الصرف الحالية
+    const currentRates = {
         USD: {
-            RUB: 92.50,
+            RUB: 97.00,
             SAR: 3.75,
-            YER: 250.00
+            YER: 250.35
         },
         RUB: {
-            USD: 0.0108,
-            SAR: 0.041,
-            YER: 2.70
+            USD: 0.0103,
+            SAR: 0.0387,
+            YER: 2.581
         },
         SAR: {
-            USD: 0.27,
-            RUB: 24.67,
-            YER: 66.67
+            USD: 0.2667,
+            RUB: 25.87,
+            YER: 66.76
         },
         YER: {
-            USD: 0.004,
-            RUB: 0.37,
+            USD: 0.00399,
+            RUB: 0.387,
             SAR: 0.015
         }
     };
 
-    // تحديث أسعار العملات في الصفحة
+    // دالة لتنسيق الأرقام بالعربية
+    function formatNumberArabic(number) {
+        return new Intl.NumberFormat('ar-SA', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(number);
+    }
+
+    // تحديث عرض الأسعار في الصفحة
     function updateDisplayRates() {
         const currentDate = new Date();
-        const formattedDate = currentDate.toLocaleString('ar-SA', {
+        const formattedDate = new Intl.DateTimeFormat('ar-SA', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
             hour: '2-digit',
-            minute: '2-digit'
-        });
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        }).format(currentDate);
 
-        usdRate.textContent = `1 USD = ${exchangeRates.USD.RUB.toFixed(2)} RUB`;
-        sarRate.textContent = `1 SAR = ${exchangeRates.SAR.RUB.toFixed(2)} RUB`;
-        yerRate.textContent = `1 YER = ${exchangeRates.YER.RUB.toFixed(2)} RUB`;
+        // تحديث عرض الأسعار
+        usdRate.innerHTML = `1 USD = <span class="rate-value">${formatNumberArabic(currentRates.USD.RUB)}</span> RUB`;
+        sarRate.innerHTML = `1 SAR = <span class="rate-value">${formatNumberArabic(currentRates.SAR.RUB)}</span> RUB`;
+        yerRate.innerHTML = `1 YER = <span class="rate-value">${formatNumberArabic(currentRates.YER.RUB)}</span> RUB`;
+        
         updateTime.textContent = `آخر تحديث: ${formattedDate}`;
     }
 
@@ -62,21 +74,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const amountValue = parseFloat(amount.value);
 
         if (from === to) {
-            result.value = amountValue.toFixed(2);
+            result.value = formatNumberArabic(amountValue);
             return;
         }
 
         let rate = 1;
-        if (exchangeRates[from] && exchangeRates[from][to]) {
-            rate = exchangeRates[from][to];
-        } else if (exchangeRates[to] && exchangeRates[to][from]) {
-            rate = 1 / exchangeRates[to][from];
+        if (currentRates[from] && currentRates[from][to]) {
+            rate = currentRates[from][to];
+        } else if (currentRates[to] && currentRates[to][from]) {
+            rate = 1 / currentRates[to][from];
         }
 
-        const convertedAmount = (amountValue * rate).toFixed(2);
-        result.value = convertedAmount;
+        const convertedAmount = amountValue * rate;
+        result.value = formatNumberArabic(convertedAmount);
 
-        // إضافة تأثير بصري للتحديث
         result.style.backgroundColor = '#f0fff4';
         setTimeout(() => {
             result.style.backgroundColor = '';
@@ -92,9 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // تحديث أسعار العملات كل دقيقة
+    // عرض الأسعار عند تحميل الصفحة
     updateDisplayRates();
-    setInterval(updateDisplayRates, 60000);
 
     // إضافة مستمعي الأحداث
     convertBtn.addEventListener('click', convertCurrency);
